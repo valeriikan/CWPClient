@@ -1,5 +1,6 @@
 package fi.oulu.tol.esde019.cwpclient019;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,12 +19,11 @@ import fi.oulu.tol.esde019.cwpclient019.model.CWPModel;
 public class MainActivity extends AppCompatActivity implements CWPProvider {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    private CWPModel mCWPModel;
     private ViewPager mViewPager;
 
-    TappingFragment tappingFragment;
-    ControlFragment controlFragment;
-    CWPModel mCWPModel;
+    private TappingFragment tappingFragment;
+    private ControlFragment controlFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements CWPProvider {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 

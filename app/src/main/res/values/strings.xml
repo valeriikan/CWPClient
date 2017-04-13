@@ -5,4 +5,16 @@
 
     <string name="toggle_connected">connected</string>
     <string name="toggle_disconnected">disconnected</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="key_server_address">key_server_address</string>
+    <string name="key_frequency">key_frequency</string>
+    <string name="key_server_address_title">Server address</string>
+    <string name="key_frequency_title">Frequency</string>
+
 </resources>
