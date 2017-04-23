@@ -8,9 +8,21 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-public class TappingFragment extends Fragment {
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
+import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWPMessaging;
+import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWProtocolListener;
+import fi.oulu.tol.esde019.cwpclient019.model.CWPModel;
+
+
+public class TappingFragment extends Fragment implements View.OnTouchListener, Observer {
+
+    CWPMessaging mCWPMessaging;
+    CWPProvider mCWPProvider;
     private ImageView imageView;
 
     public TappingFragment() {
@@ -29,23 +41,7 @@ public class TappingFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_tapping, container, false);
 
         imageView = (ImageView) v.findViewById(R.id.imageView);
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        imageView.setImageResource(R.mipmap.hal9000_up);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        imageView.setImageResource(R.mipmap.hal9000_down);
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                        imageView.setImageResource(R.mipmap.hal9000_down);
-                        break;
-                }
-                return true;
-            }
-        });
+        imageView.setOnTouchListener(this);
 
         return v;
     }
@@ -53,11 +49,53 @@ public class TappingFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mCWPProvider = (CWPProvider) getActivity();
+        mCWPMessaging = mCWPProvider.getMessaging();
+        mCWPMessaging.addObserver(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mCWPMessaging.deleteObserver(this);
+        mCWPMessaging = null;
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                try {
+                    mCWPMessaging.lineUp();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                try {
+                    mCWPMessaging.lineDown();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Connection error", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                //imageView.setImageResource(R.mipmap.hal9000_down);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (data == CWProtocolListener.CWPEvent.ELineUp) {
+            Toast.makeText(getActivity(), "LineUp", Toast.LENGTH_SHORT).show();
+            imageView.setImageResource(R.mipmap.hal9000_up);
+        }
+        if (data == CWProtocolListener.CWPEvent.ELineDown) {
+            Toast.makeText(getActivity(), "LineDown", Toast.LENGTH_SHORT).show();
+            imageView.setImageResource(R.mipmap.hal9000_down);
+        }
+    }
 }

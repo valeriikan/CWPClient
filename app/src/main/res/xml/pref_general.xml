@@ -1,0 +1,25 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:id="@+id/serverAddress"
+        android:capitalize="words"
+        android:defaultValue="127001"
+        android:inputType="textUri"
+        android:key="@string/key_server_address"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/key_server_address_title" />
+
+    <EditTextPreference
+        android:id="@+id/serverFrequency"
+        android:capitalize="words"
+        android:defaultValue="-1"
+        android:inputType="number"
+        android:key="@string/key_frequency"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/key_frequency_title" />
+
+</PreferenceScreen>

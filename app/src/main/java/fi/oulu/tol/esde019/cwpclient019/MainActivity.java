@@ -1,5 +1,6 @@
 package fi.oulu.tol.esde019.cwpclient019;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -11,13 +12,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWPControl;
+import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWPMessaging;
+import fi.oulu.tol.esde019.cwpclient019.model.CWPModel;
+
+public class MainActivity extends AppCompatActivity implements CWPProvider {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    private CWPModel mCWPModel;
     private ViewPager mViewPager;
 
-    TappingFragment tappingFragment;
+    private TappingFragment tappingFragment;
+    private ControlFragment controlFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +41,17 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         tappingFragment = new TappingFragment();
+        controlFragment = new ControlFragment();
+        mCWPModel = new CWPModel();
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCWPModel = null;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,10 +69,21 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public CWPMessaging getMessaging() {
+        return mCWPModel;
+    }
+
+    @Override
+    public CWPControl getControl() {
+        return mCWPModel;
     }
 
     /**
@@ -74,13 +100,16 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            if (position == 1) {
+                return controlFragment;
+            }
             return tappingFragment;
         }
 
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 1;
+            return 2;
         }
 
         @Override
@@ -88,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             switch (position) {
                 case 0:
                     return "Tapping";
+                case 1:
+                    return "Settings";
             }
             return null;
         }
