@@ -15,6 +15,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWPControl;
+import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWProtocolListener;
 import fi.oulu.tol.esde019.cwpclient019.model.CWPModel;
 
 
@@ -81,10 +82,10 @@ public class ControlFragment extends Fragment implements CompoundButton.OnChecke
 
     @Override
     public void update(Observable observable, Object data) {
-        if (data == CWPModel.CWPState.Connected) {
+        if (data == CWProtocolListener.CWPEvent.EConnected) {
             Toast.makeText(getActivity(), getString(R.string.toggle_connected), Toast.LENGTH_SHORT).show();
         }
-        if (data == CWPModel.CWPState.Disconnected) {
+        if (data == CWProtocolListener.CWPEvent.EDisconnected) {
             Toast.makeText(getActivity(), getString(R.string.toggle_disconnected), Toast.LENGTH_SHORT).show();
         }
     }

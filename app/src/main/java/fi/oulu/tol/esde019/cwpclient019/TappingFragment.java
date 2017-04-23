@@ -15,6 +15,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWPMessaging;
+import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWProtocolListener;
 import fi.oulu.tol.esde019.cwpclient019.model.CWPModel;
 
 
@@ -88,11 +89,11 @@ public class TappingFragment extends Fragment implements View.OnTouchListener, O
 
     @Override
     public void update(Observable observable, Object data) {
-        if (data == CWPModel.CWPState.LineUp) {
+        if (data == CWProtocolListener.CWPEvent.ELineUp) {
             Toast.makeText(getActivity(), "LineUp", Toast.LENGTH_SHORT).show();
             imageView.setImageResource(R.mipmap.hal9000_up);
         }
-        if (data == CWPModel.CWPState.LineDown) {
+        if (data == CWProtocolListener.CWPEvent.ELineDown) {
             Toast.makeText(getActivity(), "LineDown", Toast.LENGTH_SHORT).show();
             imageView.setImageResource(R.mipmap.hal9000_down);
         }
