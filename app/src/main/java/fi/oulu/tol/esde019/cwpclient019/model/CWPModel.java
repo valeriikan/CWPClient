@@ -1,5 +1,7 @@
 package fi.oulu.tol.esde019.cwpclient019.model;
 
+import android.os.Message;
+
 import java.io.IOException;
 import java.util.Observable;
 
@@ -15,32 +17,20 @@ public class CWPModel extends Observable implements CWPMessaging, CWPControl, CW
     @Override
     public void lineUp() throws IOException {
         protocolImplementation.lineUp();
-        /*currentState = CWPState.LineUp;
-        setChanged();
-        notifyObservers(currentState);*/
     }
 
     @Override
     public void lineDown() throws IOException {
         protocolImplementation.lineDown();
-        /*currentState = CWPState.LineDown;
-        setChanged();
-        notifyObservers(currentState);*/
     }
 
     @Override
     public void connect(String serverAddr, int serverPort, int frequency) throws IOException {
-        protocolImplementation.connect("serverAddr", 2, 2);
-        /*currentState = CWPState.Connected;
-        setChanged();
-        notifyObservers(currentState);*/
+        protocolImplementation.connect(serverAddr, serverPort, frequency);
     }
 
     public void disconnect() throws IOException {
         protocolImplementation.disconnect();
-        /*currentState = CWPState.Disconnected;
-        setChanged();
-        notifyObservers(currentState);*/
     }
 
     @Override
@@ -49,16 +39,16 @@ public class CWPModel extends Observable implements CWPMessaging, CWPControl, CW
     }
 
     public void setFrequency(int frequency) throws IOException {
-
+        protocolImplementation.setFrequency(frequency);
     }
 
     public int frequency() {
-        return frequency();
+        return protocolImplementation.frequency();
     }
 
     @Override
     public boolean lineIsUp() {
-        return false;
+        return protocolImplementation.lineIsUp();
     }
 
     @Override

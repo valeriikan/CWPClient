@@ -3,7 +3,7 @@
     <EditTextPreference
         android:id="@+id/serverAddress"
         android:capitalize="words"
-        android:defaultValue="127001"
+        android:defaultValue="@string/key_server_value"
         android:inputType="textUri"
         android:key="@string/key_server_address"
         android:maxLines="1"
@@ -14,7 +14,7 @@
     <EditTextPreference
         android:id="@+id/serverFrequency"
         android:capitalize="words"
-        android:defaultValue="-1"
+        android:defaultValue="@string/key_frequency_value"
         android:inputType="number"
         android:key="@string/key_frequency"
         android:maxLines="1"
