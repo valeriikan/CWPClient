@@ -5,5 +5,6 @@ import fi.oulu.tol.esde019.cwpclient019.cwprotocol.CWPMessaging;
 
 public interface CWPProvider {
     CWPMessaging getMessaging();
+
     CWPControl getControl();
 }

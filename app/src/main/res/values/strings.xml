@@ -1,20 +1,43 @@
 <resources>
     <string name="app_name">CWP Client 019</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
-    <string name="toggle_connected">connected</string>
-    <string name="toggle_disconnected">disconnected</string>
-    <string name="title_activity_settings">Settings</string>
+    <!-- Strings related to widgets -->
+    <string name="toggle_connected">Connected</string>
+    <string name="toggle_disconnected">Disconnected</string>
+    <string name="button_change">CHANGE</string>
+    <string name="et_frequency">Frequency</string>
+
+    <!-- Strings related to connection status (shown in toasts) -->
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnecting">Disconnecting…</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_frequency">Frequency:  </string>
+
+    <!-- Strings related errors (shown in toasts) -->
+    <string name="host_address_port">Host address must be port:port</string>
+    <string name="frequency_empty">Frequncy cannot be empty</string>
+    <string name="frequency_same">Your current frequency is the same. No need to apply changes</string>
+    <string name="frequency_wrong">Wrong frequency type</string>
+    <string name="settings_wrong">Client settings wrong. Host address must be port:port, Frequecny cannot be empty</string>
+    <string name="connection_error">Connection error</string>
+
+    <!-- Strings related to notifications -->
+    <string name="notify_title">CWP 19</string>
+    <string name="notify_disconnected">Disconnected</string>
+    <string name="notify_connected">Connected</string>
+    <string name="notify_signalling">Signals incoming</string>
 
     <!-- Strings related to Settings -->
-
     <!-- General settings -->
+    <string name="title_activity_settings">Settings</string>
     <string name="pref_header_general">General</string>
-
-    <string name="key_server_address">key_server_address</string>
-    <string name="key_frequency">key_frequency</string>
     <string name="key_server_address_title">Server address</string>
+    <string name="key_server_address">key_server_address</string>
+    <string name="key_server_value">cwp.opimobi.com:20000</string>
     <string name="key_frequency_title">Frequency</string>
+    <string name="key_frequency">key_frequency</string>
+    <string name="key_frequency_value">-1</string>
 
 </resources>

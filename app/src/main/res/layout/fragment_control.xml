@@ -6,10 +6,36 @@
     tools:context="fi.oulu.tol.esde019.cwpclient019.ControlFragment">
 
     <ToggleButton
-        android:id="@+id/toggleConnectCWP"
+        android:id="@+id/btnConnect"
         android:textOn="@string/toggle_connected"
         android:textOff="@string/toggle_disconnected"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/et_frequency"/>
+
+        <EditText
+            android:id="@+id/etChange"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:inputType="number"/>
+
+        <Button
+            android:id="@+id/btnChange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_change"/>
+
+    </LinearLayout>
 
 </LinearLayout>
