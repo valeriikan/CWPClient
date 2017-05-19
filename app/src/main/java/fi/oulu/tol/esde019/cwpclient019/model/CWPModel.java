@@ -1,7 +1,5 @@
 package fi.oulu.tol.esde019.cwpclient019.model;
 
-import android.os.Message;
-
 import java.io.IOException;
 import java.util.Observable;
 
@@ -35,7 +33,7 @@ public class CWPModel extends Observable implements CWPMessaging, CWPControl, CW
 
     @Override
     public boolean isConnected() {
-        return false;
+        return (protocolImplementation.getCurrentState() != CWProtocolImplementation.CWPState.Disconnected);
     }
 
     public void setFrequency(int frequency) throws IOException {

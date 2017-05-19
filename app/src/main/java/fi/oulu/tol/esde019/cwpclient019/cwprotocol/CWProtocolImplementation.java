@@ -21,7 +21,12 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
         listener = listener_p;
     }
 
-    public enum CWPState { Disconnected, Connected, LineUp, LineDown };
+    // state related variables
+    public enum CWPState {
+        Disconnected, Connected, LineUp, LineDown
+    }
+
+    ;
     private CWPState currentState = CWPState.Disconnected;
     private CWPState nextState = currentState;
     private int currentFrequency = DEFAULT_FREQUENCY;
@@ -30,6 +35,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
     private int messageValue;
     private CWProtocolListener listener;
 
+    // connection related variables
     private static final int BUFFER_LENGTH = 64;
     private static final int FORBIDDEN_VALUE = -2147483648;
     private OutputStream nos = null; //Network Output Stream
@@ -40,8 +46,6 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
     private boolean lineUpByServer = false;
     private int lineUpTimeStamp;
     private long sessionInitTime;
-
-
     private Semaphore lock = new Semaphore(1);
 
     private final static String TAG = "CWP019";
@@ -58,17 +62,22 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
 
     @Override
     public void connect(String serverAddr, int serverPort, int frequency) throws IOException {
+        Log.wtf(TAG, "Connect initialized");
         this.serverPort = serverPort;
         this.serverAddr = serverAddr;
         setFrequency(frequency);
         connection = new CWPConnectionReader(this);
         connection.startReading();
+        Log.wtf(TAG, "Start reading called");
     }
 
     @Override
     public void disconnect() throws IOException {
+        Log.wtf(TAG, "Disconnect started");
         try {
-            connection.stopReading();
+            if (connection != null) {
+                connection.stopReading();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -81,11 +90,19 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
 
     @Override
     public boolean isConnected() {
-        if (currentState == CWPState.Connected) {
-            return true;
-        } else {
-            return false;
+        boolean isConnected = false;
+        try {
+            Log.wtf(TAG, "Checking isConnected");
+            lock.acquire();
+            isConnected = (currentState == CWPState.Connected ||
+                    currentState == CWPState.LineDown ||
+                    currentState == CWPState.LineUp);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.release();
         }
+        return isConnected;
     }
 
     @Override
@@ -101,7 +118,6 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
             }
             sendFrequency();
         }
-
     }
 
     @Override
@@ -143,7 +159,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
             lock.acquire();
             if (!lineUpByUser && (currentState == CWPState.LineDown || currentState == CWPState.LineUp)) {
                 Log.wtf(TAG, "User sets line up");
-                lineUpTimeStamp = (int)(System.currentTimeMillis()-sessionInitTime);
+                lineUpTimeStamp = (int) (System.currentTimeMillis() - sessionInitTime);
                 sendMessage(lineUpTimeStamp);
                 if (currentState == CWPState.LineDown && !lineUpByServer) {
                     currentState = CWPState.LineUp;
@@ -169,7 +185,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
             lock.acquire();
             if (lineUpByUser && (currentState == CWPState.LineUp)) {
                 Log.wtf(TAG, "User sets line down");
-                msg = (short)(System.currentTimeMillis()-sessionInitTime-lineUpTimeStamp);
+                msg = (short) (System.currentTimeMillis() - sessionInitTime - lineUpTimeStamp);
                 sendMessage(msg);
                 lineUpByUser = false;
                 if (!lineUpByServer) {
@@ -189,11 +205,11 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
 
     @Override
     public boolean lineIsUp() {
-        if (currentState == CWPState.LineUp) {
-            return true;
-        } else {
-            return false;
-        }
+        return currentState == CWPState.LineUp;
+    }
+
+    public CWPState getCurrentState() {
+        return currentState;
     }
 
     @Override
@@ -232,7 +248,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
                 break;
             case LineDown:
                 if (currentState == CWPState.Connected) {
-                    Log.d(TAG, "State change to LineDown happening...");
+                    Log.d(TAG, "State change from Connected to LineDown happening...");
                     currentState = nextState;
                     lock.release();
                     if (currentFrequency != newMessageValue) {
@@ -292,7 +308,6 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
         private boolean running = false;
         private Runnable myProcessor = null;
         private static final String TAG = "CWPReader";
-
         private Socket cwpSocket = null;
         private InputStream nis = null; //Network Input Stream
 
@@ -301,6 +316,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
         }
 
         void startReading() {
+            Log.wtf(TAG, "Starting the thread");
             running = true;
             start();
         }
@@ -350,7 +366,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
                 int bytesToRead;
                 int bytesRead;
                 while (running) {
-                    // read stuff and handle it somehow...
+                    // read stuff and handle it
                     bytesToRead = 4;
                     Log.wtf(TAG, "*Bytecount Read " + bytesToRead);
                     bytesRead = readLoop(bytes, bytesToRead);
@@ -375,7 +391,6 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
                         }
                     }
                 }
-
             } catch (InterruptedException e) {
                 Log.wtf(TAG, "Interrupted exception in thread run");
                 e.printStackTrace();
@@ -383,7 +398,7 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
                 Log.wtf(TAG, "IO exception in thread run");
                 e.printStackTrace();
                 try {
-                    Log.wtf(TAG, "Change tp disconnect because of IO exception");
+                    Log.wtf(TAG, "Change to disconnect because of IO exception");
                     changeProtocolState(CWPState.Disconnected, 0);
                 } catch (InterruptedException e1) {
                     Log.wtf(TAG, "Interrupted exception when handling IO exception by disconnecting");
@@ -393,19 +408,19 @@ public class CWProtocolImplementation implements CWPControl, CWPMessaging, Runna
             Log.wtf(TAG, "Leaving from thread.run()");
         }
 
-        private int readLoop(byte [] bytes, int bytesToRead) throws IOException {
+        private int readLoop(byte[] bytes, int bytesToRead) throws IOException {
             int bytesRead = 0;
             do {
-                Arrays.fill(bytes, (byte)0);
+                Arrays.fill(bytes, (byte) 0);
+                // blocks if data is not coming from the server
                 int readNow = nis.read(bytes, bytesRead, bytesToRead - bytesRead);
                 Log.wtf(TAG, "*Bytecount Read " + readNow);
                 if (readNow == -1) { // end of stream, server closed the connection.
-                    throw new IOException("Read -1 from stream"); // You should implement this too!
+                    throw new IOException("Read -1 from stream");
                 } else {
                     bytesRead += readNow;
                 }
             } while (bytesRead < bytesToRead);
-
             return bytesRead;
         }
 
